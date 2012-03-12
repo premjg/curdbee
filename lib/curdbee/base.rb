@@ -10,8 +10,13 @@ module CurdBee
     def self.list(opts = {})
       limit = opts[:limit] || 20
       page = opts[:page] || 1
+      query_hash = {'per_page' => limit, 'page' => page }
 
-      response = send_request(:get, "/#{self.resource}.json", :query => {'per_page' => limit, 'page' => page })
+      query_hash['client'] = opts[:client] if opts[:client]
+      query_hash['order_field'] = opts[:order_field] if opts[:order_field]
+      query_hash['order_direction'] = opts[:order_direction] if opts[:order_direction]
+
+      response = send_request(:get, "/#{self.resource}.json", :query => query_hash)
       response.map {|c| self.new c["#{self.element}"]}
     end
 
